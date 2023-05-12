@@ -34,9 +34,16 @@ from matplotlib.colors import LogNorm
 # fig,ax = plt.subplots(figsize=(6,4.5))
 # ax_show = ax.twiny()
 
+# the first step of the usual transformation to zoom on extreme ranks
+def IL(x, invert = True):
+    if type(x)==np.ndarray:
+        x_IL = np.flipud(1./(1-x/100.))
+    if type(x)== float or int:
+        x_IL = 1/(1-x/100)
+    return x_IL
+
 
 #-- create inverse-log frame
-
 def setXaxisIL(ax,ranks):
     
     # define axes values
@@ -99,7 +106,7 @@ def setFrame(ax,rankmin=0,rankmax=99.99,axisIL='x'):
     if axisIL == 'x':
         setXaxisIL(ax_frame,ranks_frame)
     elif axisIL == 'y':
-        setXaxisIL(ax_frame,ranks_frame)
+        setYaxisIL(ax_frame,ranks_frame)
         
     return ax_frame
     
@@ -148,6 +155,29 @@ def showData(ax,ranks,values,axisIL='x',rankmin=0,rankmax=99.99,**kwargs):
         ax.set_yticks([], minor=True)
 
         return h
+
+def fillBetweenShowData(ax, ranks, mean, std, rankmin=0,rankmax=99.99, **kwargs):
+
+    x = IL(ranks)
+    y = mean
+    y1 = mean-std
+    y2 = mean+std
+
+    if rankmin is not None : xmin = IL(rankmin)
+    if rankmax is not None : xmax = IL(rankmax)
+    h = ax.plot(x,y) ## removed **kwargs, might be troublesome later
+    h = ax.fill_between(x,y1,y2,where=y2>=y1, **kwargs)
+
+    # be careful that the x bounds are precisely the same as the background frame
+    ax.margins(x=0)
+    # bounds
+    ax.set_xlim(xmin,xmax)
+    # log
+    ax.set_xscale ('log')
+    # remove ticks
+    ax.set_xticks([])
+    ax.set_xticks([], minor=True)
+    return h
 
 
 def subplotRanksILog(ax,ranks,y,sl=slice(None,None),rankmin=0,rankmax=99.999,setframe=True,\

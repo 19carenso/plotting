@@ -114,7 +114,7 @@ def subplotSmooth2D(ax,x,y,Z,fplot='contourf',xmin=None,xmax=None,nx=50,nlev=50,
 
 #---- 2D joint PDFs
 
-def setFrameIL(ax,xranks,yranks):
+def setFrameIL(ax,xranks,yranks, xlabel = 'x', ylabel = 'y'):
     """Set inverse-logarithmic axes on x and y axes"""
     
     ##-- create inverse-log frame
@@ -124,14 +124,16 @@ def setFrameIL(ax,xranks,yranks):
     Nx = len(x)
     Ny = len(y)
     # h = subplotSmooth2D(ax,x,y,Z,fplot='contourf',xmin=ymin,xmax=ymin,nx=50,nlev=50,vmin=None,vmax=None)
-    ax.matshow(np.full((Nx,Ny),np.nan),origin='lower',extent=[x[0],x[-1],y[0],y[-1]])
+    ax.matshow(np.full((Nx,Ny),np.nan), norm=colors.LogNorm(vmin=1e-3, vmax=1),origin='lower',extent=[x[0],x[-1],y[0],y[-1]])
     ax.set_xscale('log')
     ax.set_yscale('log')
     # axes labels and positions
     ax.xaxis.set_ticks_position('bottom')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
 
     # set xticks
-    xtick_pos = np.mod(np.log10(np.round(x,5)),1) == 0
+    xtick_pos = np.mod(np.log10(np.round(x,5)),1) == 0 ## TODO : I wonder if instead of 5 we should not try to catch the nd argument of the dist here. Ask Ben 
     xticks = x[xtick_pos]
     xticklabels = np.array(xranks[xtick_pos],dtype=str)
     ax.set_xticks(xticks)
@@ -147,13 +149,13 @@ def setFrameIL(ax,xranks,yranks):
     return ax
 
 
-def showJointHistogram(ax,values,scale='lin',vmin=1e-3,vmax=1,cmap=None):
+def showJointHistogram(ax,values,scale='lin',vmin=1e-3,vmax=1,cmap=None, interpolation = None, **kwargs):
     """Show matrix data as it is, regardless of preset frame and ticks"""
 
     if scale == 'lin':
-        h = ax.matshow(values,vmin=vmin,vmax=vmax,origin='lower',cmap=cmap)
+        h = ax.matshow(values,vmin=vmin,vmax=vmax,origin='lower',cmap=cmap, interpolation = interpolation, *kwargs)
     elif scale == 'log':
-        h = ax.matshow(values,norm=LogNorm(vmin=vmin,vmax=vmax),origin='lower',cmap=cmap)
+        h = ax.matshow(values,norm=colors.LogNorm(vmin=vmin,vmax=vmax),origin='lower',cmap=cmap, interpolation = interpolation, *kwargs)
 
     ax.set_xticks([])
     ax.set_yticks([])
