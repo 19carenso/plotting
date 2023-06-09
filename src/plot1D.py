@@ -179,6 +179,29 @@ def fillBetweenShowData(ax, ranks, mean, std, rankmin=0,rankmax=99.99, **kwargs)
     ax.set_xticks([], minor=True)
     return h
 
+def fillBetweenQuartilesShowData(ax, ranks, mean, q1, q3, rankmin=0,rankmax=99.99, **kwargs):
+
+    x = IL(ranks)
+    y = mean
+    y1 = q1
+    y2 = q3
+    if rankmin is not None : xmin = IL(rankmin)
+    if rankmax is not None : xmax = IL(rankmax)
+    h = ax.fill_between(x,y1,y2,where=y2>=y1, **kwargs)
+    color = kwargs.pop('color',None)
+    h = ax.plot(x,y, label = None, color = color)
+
+    # be careful that the x bounds are precisely the same as the background frame
+    ax.margins(x=0)
+    # bounds
+    ax.set_xlim(xmin,xmax)
+    # log
+    ax.set_xscale ('log')
+    # remove ticks
+    ax.set_xticks([])
+    ax.set_xticks([], minor=True)
+    return h
+
 
 def subplotRanksILog(ax,ranks,y,sl=slice(None,None),rankmin=0,rankmax=99.999,setframe=True,\
                      col=None,ltype=None,linewidth=None,alpha=None,labels=None,offset=0):
