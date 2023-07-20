@@ -149,10 +149,10 @@ def setFrameIL(ax,xranks,yranks, xlabel = 'x', ylabel = 'y'):
     return ax
 
 
-def showJointHistogram(ax,values,scale='lin',vmin=1e-3,vmax=1,cmap=None, interpolation = None, **kwargs):
+def showJointHistogram(ax,values,scale='linear',vmin=1e-3,vmax=1,cmap=None, interpolation = None, **kwargs):
     """Show matrix data as it is, regardless of preset frame and ticks"""
 
-    if scale == 'lin':
+    if scale == 'linear':
         h = ax.matshow(values,vmin=vmin,vmax=vmax,origin='lower',cmap=cmap, interpolation = interpolation, *kwargs)
     elif scale == 'log':
         h = ax.matshow(values,norm=colors.LogNorm(vmin=vmin,vmax=vmax),origin='lower',cmap=cmap, interpolation = interpolation, *kwargs)
